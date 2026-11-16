@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.luminar.entity.Flower;
 import com.luminar.entity.Role;
 import com.luminar.entity.User;
 import com.luminar.service.FlowerService;
+import com.luminar.service.OrderService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -20,9 +22,11 @@ import jakarta.servlet.http.HttpSession;
 public class FarmerController {
 
     private final FlowerService flowerService;
+    private final OrderService orderService;
 
-    public FarmerController(FlowerService flowerService) {
+    public FarmerController(FlowerService flowerService, OrderService orderService) {
         this.flowerService = flowerService;
+        this.orderService = orderService;
     }
 
     private User currentFarmer(HttpSession session) {
@@ -87,5 +91,25 @@ public class FarmerController {
             flowerService.delete(id);
         }
         return "redirect:/farmer/dashboard";
+    }
+    
+    @GetMapping("/orders")
+    public String farmerOrders(HttpSession session, Model model) {
+        User farmer = currentFarmer(session);
+        if (farmer == null) return "redirect:/login";
+        
+        model.addAttribute("orders", orderService.findOrdersByFarmer(farmer));
+        return "farmer/orders";
+    }
+
+    @PostMapping("/orders/{id}/status")
+    public String updateOrderStatus(@PathVariable Long id, 
+                                    @RequestParam String status, 
+                                    HttpSession session) {
+        User farmer = currentFarmer(session);
+        if (farmer == null) return "redirect:/login";
+        
+        orderService.updateStatus(id, status);
+        return "redirect:/farmer/orders";
     }
 }

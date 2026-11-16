@@ -87,4 +87,16 @@ public class OrderService {
     public List<Order> findByCustomer(User customer) {
         return orderRepository.findByCustomerIdOrderByIdDesc(customer.getId());
     }
+    
+    public List<Order> findOrdersByFarmer(User farmer) {
+        return orderRepository.findOrdersByFarmerId(farmer.getId());
+    }
+
+    @Transactional
+    public void updateStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setStatus(status);
+        orderRepository.save(order);
+    }
 }

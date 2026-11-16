@@ -13,6 +13,7 @@
         <a class="navbar-brand fw-bold" href="/farmer/dashboard">Farmer Dashboard</a>
         <div class="ms-auto">
             <span class="text-white me-3">${loggedInUser.name}</span>
+             <a href="/farmer/orders" class="btn btn-warning btn-sm me-2 text-dark fw-bold">View Orders</a>
             <a href="/" class="btn btn-outline-light btn-sm me-2">View Shop</a>
             <a href="/logout" class="btn btn-outline-light btn-sm">Logout</a>
         </div>
